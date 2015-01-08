@@ -214,6 +214,6 @@ static void __exit radio_hci_smd_exit(void)
 }
 module_exit(radio_hci_smd_exit);
 
-MODULE_DESCRIPTION("Bluetooth SMD driver");
+MODULE_DESCRIPTION("FM SMD driver");
 MODULE_AUTHOR("Ankur Nandwani <ankurn@codeaurora.org>");
 MODULE_LICENSE("GPL v2");
