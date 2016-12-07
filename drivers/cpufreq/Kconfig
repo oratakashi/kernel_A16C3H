@@ -208,8 +208,15 @@ config CPU_FREQ_GOV_IMPULSE
 
     If in doubt, say N.
 
+config CPU_FREQ_GOV_ELECTRODEMAND
+ 	tristate "'electrodemand' cpufreq policy governor"
+	depends on CPU_FREQ
+
 endchoice
 
+config CPU_FREQ_DEFAULT_GOV_ELECTRODEMAND
+	bool "electrodemand"
+select CPU_FREQ_GOV_ELECTRODEMAND
 
 config CPU_FREQ_DEFAULT_GOV_IMPULSE
 	bool "impulse"
