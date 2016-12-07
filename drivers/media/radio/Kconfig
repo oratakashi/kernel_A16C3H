@@ -498,7 +498,7 @@ endif # V4L_RADIO_ISA_DRIVERS
 config RADIO_IRIS
         tristate "Qualcomm IRIS FM support"
         depends on VIDEO_V4L2
-        default n
+        default y
         ---help---
           Say Y here if you want to use the Qualcomm FM chip (IRIS).
           This FM chip uses SMD interface
@@ -510,7 +510,7 @@ config RADIO_IRIS
 config RADIO_IRIS_TRANSPORT
         tristate "Qualcomm IRIS Transport"
         depends on RADIO_IRIS
-        default n
+        default y
         ---help---
           Say Y here if you want to use the Qualcomm FM chip (IRIS).
           with SMD as transport.
