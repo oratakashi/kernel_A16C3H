@@ -199,7 +199,23 @@ config CPU_FREQ_GOV_INTEL
 
 	  If in doubt, say N. 
 
+config CPU_FREQ_GOV_IMPULSE
+	tristate "'impulse' cpufreq policy governor"
+	depends on CPU_FREQ
+	help
+    'impulse' - This driver adds a dynamic cpufreq policy governor
+    designed for optimized balance between power and performance.
+
+    If in doubt, say N.
+
 endchoice
+
+
+config CPU_FREQ_DEFAULT_GOV_IMPULSE
+	bool "impulse"
+	select CPU_FREQ_GOV_IMPULSE
+	---help---
+	  Use the CPUFreq governor 'impulse' as default
 
 config CPU_FREQ_DEFAULT_GOV_INTEL
 	bool "intel"
