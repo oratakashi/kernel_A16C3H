@@ -152,7 +152,16 @@ config CPU_FREQ_GOV_SMARTMAX
  	---help---
 	  'smartmax' combines ondemand and smartass2
 
+config CPU_FREQ_GOV_PEGASUSQ
+	tristate "'pegasusq' cpufreq policy governor"
+
 endchoice
+
+config CPU_FREQ_DEFAULT_GOV_PEGASUSQ
+	bool "pegasusq"
+	select CPU_FREQ_GOV_PEGASUSQ
+	---help---
+	  Use the CPUFreq governor 'pegasusq' as default.
 
 config CPU_FREQ_DEFAULT_GOV_SMARTMAX
  	bool "smartmax"
