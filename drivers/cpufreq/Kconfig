@@ -129,7 +129,17 @@ config CPU_FREQ_DEFAULT_GOV_YANKACTIVE
  	bool "yankactive"
  	select CPU_FREQ_GOV_YANKACTIVE
 
+config CPU_FREQ_DEFAULT_GOV_HYPER
+ 	bool "hyper"
+ 	select CPU_FREQ_GOV_HYPER
+
 endchoice
+
+config CPU_FREQ_GOV_HYPER
+ 	tristate "'hyper' cpufreq governor"
+ 	depends on CPU_FREQ
+ 	---help---
+ 	  'hyper' - A tweaked "ondemand" based smart and smooth optimized governor!
 
 config CPU_FREQ_GOV_YANKACTIVE
  	tristate "'yankactive' cpufreq policy governor"
