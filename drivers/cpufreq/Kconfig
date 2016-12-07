@@ -177,7 +177,17 @@ config CPU_FREQ_GOV_LIONFISH
 
 	  If in doubt, say N.
 
+config CPU_FREQ_GOV_INTERACTIVE_PRO
+	tristate "'interactive_pro' cpufreq governor"
+	depends on CPU_FREQ
+
 endchoice
+
+config CPU_FREQ_DEFAULT_GOV_INTERACTIVE_PRO
+	bool "interactive_pro"
+	select CPU_FREQ_GOV_INTERACTIVE_PRO
+	---help---
+	  Use the CPUFreq governor 'interactive_pro' as default.
 
 config CPU_FREQ_DEFAULT_GOV_LIONFISH
 	bool "lionfish"
