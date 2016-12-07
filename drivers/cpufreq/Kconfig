@@ -146,7 +146,19 @@ config CPU_FREQ_DEFAULT_GOV_SMARTMAX_EPS
         ---help---
 	  Use the CPUFreq governor 'smartmax eps' as default
 
+config CPU_FREQ_GOV_SMARTMAX
+ 	tristate "'smartmax' cpufreq policy governor"
+ 	select CPU_FREQ_TABLE
+ 	---help---
+	  'smartmax' combines ondemand and smartass2
+
 endchoice
+
+config CPU_FREQ_DEFAULT_GOV_SMARTMAX
+ 	bool "smartmax"
+ 	select CPU_FREQ_GOV_SMARTMAX
+ 	---help---
+	  Use the CPUFreq governor 'smartmax' as default
 
 config CPU_FREQ_GOV_SMARTMAX_EPS
         tristate "'smartmax EPS' cpufreq policy governor"
