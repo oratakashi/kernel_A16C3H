@@ -24,7 +24,7 @@
 #include <linux/input.h>
 #include <linux/workqueue.h>
 #include <linux/slab.h>
-#include <linux/new_exp_suspend.h>
+#include <linux/powersuspend.h>
 
 /*
  * authority is used in this file as a shortform for demandbased switching

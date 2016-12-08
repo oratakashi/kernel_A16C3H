@@ -25,7 +25,7 @@
  *
  */
 
-#include <linux/new_exp_suspend.h>
+#include <linux/powersuspend.h>
 #include <linux/module.h>
 #include <linux/mutex.h>
 #include <linux/workqueue.h>
