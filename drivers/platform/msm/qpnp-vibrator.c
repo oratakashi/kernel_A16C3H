@@ -23,6 +23,12 @@
 #include <linux/err.h>
 #include "../../staging/android/timed_output.h"
 
+#ifdef CONFIG_TOUCHSCREEN_PREVENT_SLEEP
+#ifdef CONFIG_TOUCHSCREEN_DOUBLETAP2WAKE
+#include <linux/input/doubletap2wake.h>
+#endif
+#endif
+
 #define QPNP_VIB_VTG_CTL(base)		(base + 0x41)
 #define QPNP_VIB_EN_CTL(base)		(base + 0x46)
 
@@ -67,6 +73,8 @@ struct qpnp_vib {
 	int timeout;
 	struct mutex lock;
 };
+
+static struct qpnp_vib *gvib;
 
 static int qpnp_vib_read_u8(struct qpnp_vib *vib, u8 *data, u16 reg)
 {
@@ -197,6 +205,13 @@ static void qpnp_vib_enable(struct timed_output_dev *dev, int value)
 	mutex_unlock(&vib->lock);
 	schedule_work(&vib->work);
 }
+
+#ifdef CONFIG_TOUCHSCREEN_PREVENT_SLEEP
+void set_vibrate(int value)
+{
+	qpnp_vib_enable(&gvib->timed_dev, value);
+}
+#endif
 
 static void qpnp_vib_update(struct work_struct *work)
 {
@@ -423,6 +438,8 @@ static int qpnp_vibrator_probe(struct spmi_device *spmi)
 	vib->timed_dev.enable = qpnp_vib_enable;
 
 	dev_set_drvdata(&spmi->dev, vib);
+
+	gvib = vib;
 
 	rc = timed_output_dev_register(&vib->timed_dev);
 	if (rc < 0)
