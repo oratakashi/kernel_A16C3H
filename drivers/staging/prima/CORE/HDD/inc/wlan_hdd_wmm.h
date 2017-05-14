@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014 The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012-2017 The Linux Foundation. All rights reserved.
  *
  * Previously licensed under the ISC license by Qualcomm Atheros, Inc.
  *
@@ -29,10 +29,8 @@
 #define _WLAN_HDD_WMM_H
 /*============================================================================
   @file wlan_hdd_wmm.h
-
   This module (wlan_hdd_wmm.h interface + wlan_hdd_wmm.c implementation)
   houses all the logic for WMM in HDD.
-
   On the control path, it has the logic to setup QoS, modify QoS and delete
   QoS (QoS here refers to a TSPEC). The setup QoS comes in two flavors: an
   explicit application invoked and an internal HDD invoked.  The implicit QoS
@@ -40,12 +38,10 @@
   which DO mark their traffic for priortization. It also has logic to start,
   update and stop the U-APSD trigger frame generation. It also has logic to
   read WMM related config parameters from the registry.
-
   On the data path, it has the logic to figure out the WMM AC of an egress
   packet and when to signal TL to serve a particular AC queue. It also has the
   logic to retrieve a packet based on WMM priority in response to a fetch from
   TL.
-
   The remaining functions are utility functions for information hiding.
 ============================================================================*/
 /* $Header$ */
@@ -193,7 +189,6 @@ typedef struct
 typedef struct
 {
    struct list_head             wmmContextList;
-   struct mutex                 wmmLock;
    hdd_wmm_ac_status_t          wmmAcStatus[WLANTL_MAX_AC];
    v_BOOL_t                     wmmQap;
    v_BOOL_t                     wmmQosConnection;
@@ -209,12 +204,9 @@ extern const v_U8_t hddLinuxUpToAcMap[];
   @brief hdd_wmm_init() - Function which will initialize the WMM configuation
   and status to an initial state.  The configuration can later be overwritten
   via application APIs
-
   @param pAdapter : [in]  pointer to Adapter context
-
   @return         : VOS_STATUS_SUCCESS if succssful
                   : other values if failure
-
   ===========================================================================*/
 VOS_STATUS hdd_wmm_init ( hdd_adapter_t *pAdapter );
 
@@ -222,34 +214,26 @@ VOS_STATUS hdd_wmm_init ( hdd_adapter_t *pAdapter );
   @brief hdd_wmm_adapter_init() - Function which will initialize the WMM configuation
   and status to an initial state.  The configuration can later be overwritten
   via application APIs
-
   @param pAdapter : [in]  pointer to Adapter context
-
   @return         : VOS_STATUS_SUCCESS if succssful
                   : other values if failure
-
   ===========================================================================*/
 VOS_STATUS hdd_wmm_adapter_init( hdd_adapter_t *pAdapter );
 
 /**============================================================================
   @brief hdd_wmm_adapter_close() - Function which will perform any necessary work to
   to clean up the WMM functionality prior to the kernel module unload
-
   @param pAdapter : [in]  pointer to adapter context
-
   @return         : VOS_STATUS_SUCCESS if succssful
                   : other values if failure
-
   ===========================================================================*/
 VOS_STATUS hdd_wmm_adapter_close ( hdd_adapter_t* pAdapter );
 
 /**============================================================================
   @brief hdd_wmm_select_queue() - Function which will classify an OS packet
   into linux Qdisc expectation
-
   @param dev      : [in]  pointer to net_device structure
   @param skb      : [in]  pointer to OS packet (sk_buff)
-
   @return         : queue_index/linux AC value.
   ===========================================================================*/
 v_U16_t hdd_wmm_select_queue(struct net_device * dev, struct sk_buff *skb);
@@ -257,26 +241,27 @@ v_U16_t hdd_wmm_select_queue(struct net_device * dev, struct sk_buff *skb);
 /**============================================================================
   @brief hdd_hostapd_select_queue() - Function which will classify the packet
          according to linux qdisc expectation.
-
-
   @param dev      : [in]  pointer to net_device structure
   @param skb      : [in]  pointer to os packet
-
   @return         : Qdisc queue index
   ===========================================================================*/
 
-v_U16_t hdd_hostapd_select_queue(struct net_device * dev, struct sk_buff *skb);
-
+v_U16_t hdd_hostapd_select_queue(struct net_device * dev, struct sk_buff *skb
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,13,0))
+                                 , void *accel_priv
+#endif
+#if (LINUX_VERSION_CODE >= KERNEL_VERSION(3,14,0))
+                                 , select_queue_fallback_t fallbac
+#endif
+);
 
 
 /**============================================================================
   @brief hdd_wmm_classify_pkt() - Function which will classify an OS packet
   into a WMM AC based on either 802.1Q or DSCP
-
   @param pAdapter : [in]  pointer to adapter context
   @param skb      : [in]  pointer to OS packet (sk_buff)
   @param pAcType  : [out] pointer to WMM AC type of OS packet
-
   @return         : None
   ===========================================================================*/
 v_VOID_t hdd_wmm_classify_pkt ( hdd_adapter_t* pAdapter,
@@ -288,12 +273,10 @@ v_VOID_t hdd_wmm_classify_pkt ( hdd_adapter_t* pAdapter,
 /**============================================================================
   @brief hdd_wmm_acquire_access() - Function which will attempt to acquire
   admittance for a WMM AC
-
   @param pAdapter : [in]  pointer to adapter context
   @param acType   : [in]  WMM AC type of OS packet
   @param pGranted : [out] pointer to boolean flag when indicates if access
                           has been granted or not
-
   @return         : VOS_STATUS_SUCCESS if succssful
                   : other values if failure
   ===========================================================================*/
@@ -304,11 +287,9 @@ VOS_STATUS hdd_wmm_acquire_access( hdd_adapter_t* pAdapter,
 /**============================================================================
   @brief hdd_wmm_assoc() - Function which will handle the housekeeping
   required by WMM when association takes place
-
   @param pAdapter : [in]  pointer to adapter context
   @param pRoamInfo: [in]  pointer to roam information
   @param eBssType : [in]  type of BSS
-
   @return         : VOS_STATUS_SUCCESS if succssful
                   : other values if failure
   ===========================================================================*/
@@ -319,11 +300,9 @@ VOS_STATUS hdd_wmm_assoc( hdd_adapter_t* pAdapter,
 /**============================================================================
   @brief hdd_wmm_connect() - Function which will handle the housekeeping
   required by WMM when a connection is established
-
   @param pAdapter : [in]  pointer to adapter context
   @param pRoamInfo: [in]  pointer to roam information
   @param eBssType : [in]  type of BSS
-
   @return         : VOS_STATUS_SUCCESS if succssful
                   : other values if failure
   ===========================================================================*/
@@ -334,10 +313,8 @@ VOS_STATUS hdd_wmm_connect( hdd_adapter_t* pAdapter,
 /**============================================================================
   @brief hdd_wmm_get_uapsd_mask() - Function which will calculate the
   initial value of the UAPSD mask based upon the device configuration
-
   @param pAdapter  : [in]  pointer to adapter context
   @param pUapsdMask: [in]  pointer to where the UAPSD Mask is to be stored
-
   @return         : VOS_STATUS_SUCCESS if succssful
                   : other values if failure
   ===========================================================================*/
@@ -347,9 +324,7 @@ VOS_STATUS hdd_wmm_get_uapsd_mask( hdd_adapter_t* pAdapter,
 /**============================================================================
   @brief hdd_wmm_is_active() - Function which will determine if WMM is
   active on the current connection
-
   @param pAdapter  : [in]  pointer to adapter context
-
   @return         : VOS_TRUE if WMM is enabled
                   : VOS_FALSE if WMM is not enabled
   ===========================================================================*/
@@ -358,11 +333,9 @@ v_BOOL_t hdd_wmm_is_active( hdd_adapter_t* pAdapter );
 /**============================================================================
   @brief hdd_wmm_addts() - Function which will add a traffic spec at the
   request of an application
-
   @param pAdapter  : [in]  pointer to adapter context
   @param handle    : [in]  handle to uniquely identify a TS
   @param pTspec    : [in]  pointer to the traffic spec
-
   @return          : HDD_WLAN_WMM_STATUS_* 
   ===========================================================================*/
 hdd_wlan_wmm_status_e hdd_wmm_addts( hdd_adapter_t* pAdapter,
@@ -372,10 +345,8 @@ hdd_wlan_wmm_status_e hdd_wmm_addts( hdd_adapter_t* pAdapter,
 /**============================================================================
   @brief hdd_wmm_delts() - Function which will delete a traffic spec at the
   request of an application
-
   @param pAdapter  : [in]  pointer to adapter context
   @param handle    : [in]  handle to uniquely identify a TS
-
   @return          : HDD_WLAN_WMM_STATUS_* 
   ===========================================================================*/
 hdd_wlan_wmm_status_e hdd_wmm_delts( hdd_adapter_t* pAdapter,
@@ -384,10 +355,8 @@ hdd_wlan_wmm_status_e hdd_wmm_delts( hdd_adapter_t* pAdapter,
 /**============================================================================
   @brief hdd_wmm_checkts() - Function which will return the status of a traffic
   spec at the request of an application
-
   @param pAdapter  : [in]  pointer to adapter context
   @param handle    : [in]  handle to uniquely identify a TS
-
   @return          : HDD_WLAN_WMM_STATUS_* 
   ===========================================================================*/
 hdd_wlan_wmm_status_e hdd_wmm_checkts( hdd_adapter_t* pAdapter,
@@ -396,10 +365,23 @@ hdd_wlan_wmm_status_e hdd_wmm_checkts( hdd_adapter_t* pAdapter,
   @brief hdd_wmm_adapter_clear() - Function which will clear the WMM status
   of all ACs
   @param pAdapter  : [in]  pointer to adapter context
-
   @return          : VOS_STATUS_SUCCESS if succssful
                    : other values if failure
   ===========================================================================*/
 VOS_STATUS hdd_wmm_adapter_clear( hdd_adapter_t *pAdapter );
+
+/**============================================================================
+  @brief hdd_log_ip_addr() - Function to log IP header src and dst address
+  @param pAdapter  : [in]  pointer to os packet
+  @return          : None
+  ===========================================================================*/
+void hdd_log_ip_addr(struct sk_buff *skb);
+
+/**============================================================================
+  @brief hdd_get_arp_src_ip() - Function to get ARP src IP addr
+  @param pAdapter  : [in]  pointer to os packet
+  @return          : IP address
+  ===========================================================================*/
+uint32_t hdd_get_arp_src_ip(struct sk_buff *skb);
 
 #endif /* #ifndef _WLAN_HDD_WMM_H */
